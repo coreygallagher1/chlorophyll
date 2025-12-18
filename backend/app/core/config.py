@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     api_prefix: str = "/api"
 
     database_url: AnyUrl = Field(
-        "postgresql+asyncpg://postgres:postgres@localhost:5432/chlorophyll",
+        "postgresql+asyncpg://postgres:postgres@localhost:5433/chlorophyll",
         alias="DATABASE_URL",
     )
     redis_url: AnyUrl = Field("redis://localhost:6379/0", alias="REDIS_URL")
