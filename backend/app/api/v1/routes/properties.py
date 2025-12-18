@@ -1,7 +1,9 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.db.session import get_db
 from app.schemas.properties import (
     LivingAssetCreate,
     LivingAssetRead,
@@ -15,8 +17,8 @@ from app.services.properties import PropertyService
 router = APIRouter()
 
 
-def get_service() -> PropertyService:
-    return PropertyService()
+def get_service(db: Annotated[AsyncSession, Depends(get_db)]) -> PropertyService:
+    return PropertyService(db)
 
 
 ServiceDep = Annotated[PropertyService, Depends(get_service)]

@@ -1,6 +1,8 @@
-from datetime import datetime
-from typing import Any
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
+from app.models.property import LivingAsset, PlantTaxon, Property
 from app.schemas.properties import (
     LivingAssetCreate,
     LivingAssetRead,
@@ -14,55 +16,73 @@ class PropertyService:
     """
     Property & Horticulture Service.
 
-    For now, this is an in-memory / placeholder implementation. Later we will
-    inject an AsyncSession and implement real persistence.
+    Handles CRUD operations for properties and living assets.
     """
 
+    def __init__(self, db: AsyncSession) -> None:
+        self.db = db
+
     async def create_property(self, data: PropertyCreate) -> PropertyRead:
-        return PropertyRead(
-            id=1,
-            created_at=datetime.now(),
-            **data.model_dump(),
-        )
+        """Create a new property."""
+        property_obj = Property(**data.model_dump())
+        self.db.add(property_obj)
+        await self.db.commit()
+        await self.db.refresh(property_obj)
+        return PropertyRead.model_validate(property_obj)
 
     async def get_property(self, property_id: int) -> PropertyRead:
-        # Placeholder response; replace with DB query
-        return PropertyRead(
-            id=property_id,
-            name="Demo Property",
-            client_id=123,
-            city="Saint Paul",
-            state="MN",
-            postal_code="55101",
-            usda_zone="4b",
-            soil_profile=None,
-            sun_exposure_map=None,
-            created_at=datetime.now(),
+        """Get a property by ID. Raises 404 if not found."""
+        result = await self.db.execute(
+            select(Property).where(Property.id == property_id)
         )
+        property_obj = result.scalar_one_or_none()
+        if property_obj is None:
+            from fastapi import HTTPException
+
+            raise HTTPException(status_code=404, detail=f"Property {property_id} not found")
+        return PropertyRead.model_validate(property_obj)
 
     async def add_living_asset(
         self,
         property_id: int,
         data: LivingAssetCreate,
     ) -> LivingAssetRead:
-        return LivingAssetRead(
-            id=1,
-            property_id=property_id,
-            created_at=datetime.now(),
-            **data.model_dump(),
+        """Add a living asset to a property."""
+        # Verify property exists
+        await self.get_property(property_id)
+
+        # Verify plant taxon exists
+        result = await self.db.execute(
+            select(PlantTaxon).where(PlantTaxon.id == data.plant_taxon_id)
         )
+        taxon = result.scalar_one_or_none()
+        if taxon is None:
+            from fastapi import HTTPException
+
+            raise HTTPException(
+                status_code=404, detail=f"Plant taxon {data.plant_taxon_id} not found"
+            )
+
+        asset = LivingAsset(property_id=property_id, **data.model_dump())
+        self.db.add(asset)
+        await self.db.commit()
+        await self.db.refresh(asset)
+        return LivingAssetRead.model_validate(asset)
 
     async def search_taxonomy(self, query: str) -> list[PlantTaxonRead]:
-        # Very lightweight fake search result for scaffolding
-        sample: dict[str, Any] = {
-            "id": 1,
-            "botanical_name": "Hydrangea arborescens",
-            "common_name": "Smooth hydrangea",
-            "cultivar": "Annabelle",
-            "is_minnesota_native": True,
-        }
-        if query:
-            return [PlantTaxonRead(**sample)]
-        return []
+        """Search plant taxonomy by botanical name, common name, or cultivar."""
+        if not query or not query.strip():
+            return []
+
+        search_term = f"%{query.strip().lower()}%"
+        result = await self.db.execute(
+            select(PlantTaxon).where(
+                (PlantTaxon.botanical_name.ilike(search_term))
+                | (PlantTaxon.common_name.ilike(search_term))
+                | (PlantTaxon.cultivar.ilike(search_term))
+            )
+        )
+        taxa = result.scalars().all()
+        return [PlantTaxonRead.model_validate(taxon) for taxon in taxa]
 
 

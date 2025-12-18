@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
 from sqlalchemy import DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -21,7 +21,9 @@ class Property(Base):
     soil_profile: Mapped[str | None] = mapped_column(Text)
     sun_exposure_map: Mapped[str | None] = mapped_column(Text)  # could be GeoJSON
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(UTC).replace(tzinfo=None)
+    )
 
     living_assets: Mapped[list["LivingAsset"]] = relationship(
         back_populates="property", cascade="all, delete-orphan"
@@ -61,7 +63,9 @@ class LivingAsset(Base):
     location_note: Mapped[str | None] = mapped_column(String(255))
     health_status: Mapped[str | None] = mapped_column(String(32))
 
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(UTC).replace(tzinfo=None)
+    )
 
     property: Mapped[Property] = relationship(back_populates="living_assets")
     taxon: Mapped[PlantTaxon] = relationship()

@@ -2,21 +2,23 @@
 from datetime import datetime
 
 import pytest
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 
 
-def test_health_check(client: TestClient) -> None:
+@pytest.mark.asyncio
+async def test_health_check(client: AsyncClient) -> None:
     """Test the health check endpoint."""
-    response = client.get("/health")
+    response = await client.get("/health")
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"
     assert "environment" in data
 
 
-def test_system_info(client: TestClient) -> None:
+@pytest.mark.asyncio
+async def test_system_info(client: AsyncClient) -> None:
     """Test the system info endpoint."""
-    response = client.get("/api/v1/system/info")
+    response = await client.get("/api/v1/system/info")
     assert response.status_code == 200
     
     data = response.json()

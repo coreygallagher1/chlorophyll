@@ -1,9 +1,10 @@
 """Tests for properties endpoints."""
 import pytest
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 
 
-def test_create_property(client: TestClient) -> None:
+@pytest.mark.asyncio
+async def test_create_property(client: AsyncClient) -> None:
     """Test creating a property."""
     property_data = {
         "name": "Test Garden",
@@ -14,7 +15,7 @@ def test_create_property(client: TestClient) -> None:
         "usda_zone": "4b",
     }
     
-    response = client.post("/api/v1/properties/", json=property_data)
+    response = await client.post("/api/v1/properties/", json=property_data)
     assert response.status_code == 200
     
     data = response.json()
@@ -25,21 +26,34 @@ def test_create_property(client: TestClient) -> None:
     assert "id" in data
 
 
-def test_get_property(client: TestClient) -> None:
+@pytest.mark.asyncio
+async def test_get_property(client: AsyncClient) -> None:
     """Test getting a property by ID."""
-    response = client.get("/api/v1/properties/1")
+    # First create a property
+    property_data = {
+        "name": "Test Property",
+        "client_id": 1,
+        "city": "Saint Paul",
+        "state": "MN",
+    }
+    create_response = await client.post("/api/v1/properties/", json=property_data)
+    property_id = create_response.json()["id"]
+    
+    # Now get it
+    response = await client.get(f"/api/v1/properties/{property_id}")
     assert response.status_code == 200
     
     data = response.json()
-    assert data["id"] == 1
+    assert data["id"] == property_id
     assert "name" in data
     assert "client_id" in data
     assert "created_at" in data
 
 
-def test_search_taxonomy(client: TestClient) -> None:
+@pytest.mark.asyncio
+async def test_search_taxonomy(client: AsyncClient) -> None:
     """Test searching plant taxonomy."""
-    response = client.get("/api/v1/properties/taxonomy/search?q=hydrangea")
+    response = await client.get("/api/v1/properties/taxonomy/search?q=hydrangea")
     assert response.status_code == 200
     
     data = response.json()
@@ -51,19 +65,31 @@ def test_search_taxonomy(client: TestClient) -> None:
         assert "common_name" in plant
 
 
-def test_add_living_asset(client: TestClient) -> None:
+@pytest.mark.asyncio
+async def test_add_living_asset(client: AsyncClient) -> None:
     """Test adding a living asset to a property."""
+    # First create a property
+    property_data = {
+        "name": "Test Property",
+        "client_id": 1,
+        "city": "Saint Paul",
+        "state": "MN",
+    }
+    create_response = await client.post("/api/v1/properties/", json=property_data)
+    property_id = create_response.json()["id"]
+    
+    # Now add an asset (using plant_taxon_id 1 from seed data)
     asset_data = {
         "plant_taxon_id": 1,
         "location_note": "Front yard, near entrance",
         "health_status": "healthy",
     }
     
-    response = client.post("/api/v1/properties/1/assets", json=asset_data)
+    response = await client.post(f"/api/v1/properties/{property_id}/assets", json=asset_data)
     assert response.status_code == 200
     
     data = response.json()
-    assert data["property_id"] == 1
+    assert data["property_id"] == property_id
     assert data["plant_taxon_id"] == asset_data["plant_taxon_id"]
     assert "id" in data
 

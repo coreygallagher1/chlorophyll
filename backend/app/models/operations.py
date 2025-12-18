@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import UTC, date, datetime
 
 from sqlalchemy import Boolean, Date, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -28,7 +28,9 @@ class WorkOrder(Base):
     kind: Mapped[str] = mapped_column(String(64))  # pruning, planting, inspection, etc.
     status: Mapped[str] = mapped_column(String(32), default="pending")
     scheduled_for: Mapped[date | None] = mapped_column(Date)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, default=lambda: datetime.now(UTC).replace(tzinfo=None)
+    )
 
     triggered_by_gdd: Mapped[bool] = mapped_column(Boolean, default=False)
     trigger_threshold: Mapped[float | None] = mapped_column(Float)
