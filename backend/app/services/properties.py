@@ -22,6 +22,12 @@ class PropertyService:
     def __init__(self, db: AsyncSession) -> None:
         self.db = db
 
+    async def list_properties(self) -> list[PropertyRead]:
+        """List all properties."""
+        result = await self.db.execute(select(Property))
+        properties = result.scalars().all()
+        return [PropertyRead.model_validate(prop) for prop in properties]
+
     async def create_property(self, data: PropertyCreate) -> PropertyRead:
         """Create a new property."""
         property_obj = Property(**data.model_dump())

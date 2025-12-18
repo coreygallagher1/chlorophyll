@@ -23,7 +23,8 @@ const config: Config = {
           "emerald-500": "#246b48",
           "emerald-600": "#1d5539",
           "emerald-700": "#16422c",
-          "emerald-800": "#0f2e1e"
+          "emerald-800": "#0f2e1e",
+          "emerald-900": "#0a1f14"
         }
       },
       borderRadius: {

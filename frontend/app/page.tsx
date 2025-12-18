@@ -34,10 +34,10 @@ export default function HomePage() {
           </p>
           <div className="flex flex-wrap gap-3">
             <a
-              href="#contact"
+              href="/properties"
               className="inline-flex items-center justify-center rounded-lg bg-chlorophyll-light px-6 py-3 text-sm font-semibold text-chlorophyll-emerald-700 shadow-md shadow-chlorophyll-light/30 transition-all hover:bg-chlorophyll-light-200 hover:shadow-lg hover:shadow-chlorophyll-light/40"
             >
-              Request a demo
+              View Properties
             </a>
             <a
               href="#pillars"

@@ -24,6 +24,12 @@ def get_service(db: Annotated[AsyncSession, Depends(get_db)]) -> PropertyService
 ServiceDep = Annotated[PropertyService, Depends(get_service)]
 
 
+@router.get("/", response_model=list[PropertyRead])
+async def list_properties(service: ServiceDep) -> list[PropertyRead]:
+    """List all properties."""
+    return await service.list_properties()
+
+
 @router.post("/", response_model=PropertyRead)
 async def create_property(data: PropertyCreate, service: ServiceDep) -> PropertyRead:
     return await service.create_property(data)
