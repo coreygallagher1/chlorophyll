@@ -40,6 +40,12 @@ export default function HomePage() {
               View Properties
             </a>
             <a
+              href="/plants"
+              className="inline-flex items-center justify-center rounded-lg bg-chlorophyll-light px-6 py-3 text-sm font-semibold text-chlorophyll-emerald-700 shadow-md shadow-chlorophyll-light/30 transition-all hover:bg-chlorophyll-light-200 hover:shadow-lg hover:shadow-chlorophyll-light/40"
+            >
+              View Plants
+            </a>
+            <a
               href="#pillars"
               className="inline-flex items-center justify-center rounded-lg border-2 border-chlorophyll-emerald-300 bg-white px-6 py-3 text-sm font-semibold text-chlorophyll-emerald-600 transition-all hover:border-chlorophyll-emerald-400 hover:bg-chlorophyll-emerald-50"
             >
