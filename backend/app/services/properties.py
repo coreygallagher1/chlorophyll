@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Any
 
 from app.schemas.properties import (
@@ -20,7 +21,7 @@ class PropertyService:
     async def create_property(self, data: PropertyCreate) -> PropertyRead:
         return PropertyRead(
             id=1,
-            created_at=None,  # type: ignore[arg-type]
+            created_at=datetime.now(),
             **data.model_dump(),
         )
 
@@ -36,7 +37,7 @@ class PropertyService:
             usda_zone="4b",
             soil_profile=None,
             sun_exposure_map=None,
-            created_at=None,  # type: ignore[arg-type]
+            created_at=datetime.now(),
         )
 
     async def add_living_asset(
@@ -47,7 +48,7 @@ class PropertyService:
         return LivingAssetRead(
             id=1,
             property_id=property_id,
-            created_at=None,  # type: ignore[arg-type]
+            created_at=datetime.now(),
             **data.model_dump(),
         )
 

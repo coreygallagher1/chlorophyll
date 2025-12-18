@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class PropertyBase(BaseModel):
@@ -19,22 +19,20 @@ class PropertyCreate(PropertyBase):
 
 
 class PropertyRead(PropertyBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     created_at: datetime
 
-    class Config:
-        from_attributes = True
-
 
 class PlantTaxonRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     botanical_name: str
     common_name: str | None = None
     cultivar: str | None = None
     is_minnesota_native: bool
-
-    class Config:
-        from_attributes = True
 
 
 class LivingAssetBase(BaseModel):
@@ -48,11 +46,10 @@ class LivingAssetCreate(LivingAssetBase):
 
 
 class LivingAssetRead(LivingAssetBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     property_id: int
     created_at: datetime
-
-    class Config:
-        from_attributes = True
 
 
