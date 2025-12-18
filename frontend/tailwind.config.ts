@@ -7,16 +7,23 @@ const config: Config = {
     extend: {
       colors: {
         chlorophyll: {
-          50: "#f4fbf6",
-          100: "#e5f7ea",
-          200: "#c5ebd0",
-          300: "#93d7a8",
-          400: "#57b872",
-          500: "#2f974d",
-          600: "#22763a",
-          700: "#1d5d30",
-          800: "#174627",
-          900: "#123820"
+          // Light green (lime/yellowish-green from logo)
+          light: "#a8e063",
+          "light-50": "#f0f9e8",
+          "light-100": "#ddf2c4",
+          "light-200": "#c8ea9a",
+          "light-300": "#a8e063",
+          // Emerald green (darker green from logo)
+          emerald: "#2d8659",
+          "emerald-50": "#e8f5ed",
+          "emerald-100": "#c4e4d3",
+          "emerald-200": "#9dd1b5",
+          "emerald-300": "#6fb88f",
+          "emerald-400": "#2d8659",
+          "emerald-500": "#246b48",
+          "emerald-600": "#1d5539",
+          "emerald-700": "#16422c",
+          "emerald-800": "#0f2e1e"
         }
       },
       borderRadius: {
