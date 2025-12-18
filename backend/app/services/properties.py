@@ -2,7 +2,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.models.property import LivingAsset, PlantTaxon, Property
+from app.models.living_asset import LivingAsset
+from app.models.plant import PlantTaxon
+from app.models.property import Property
 from app.schemas.properties import (
     LivingAssetCreate,
     LivingAssetRead,
