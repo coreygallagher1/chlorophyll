@@ -3,7 +3,11 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Chlorophyll",
-  description: "Horticultural ERP for managing living assets with phenological intelligence."
+  description: "Horticultural ERP for managing living assets with phenological intelligence.",
+  icons: {
+    icon: "/chlorophyll_logo.png",
+    apple: "/chlorophyll_logo.png"
+  }
 };
 
 export default function RootLayout({
